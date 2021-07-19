@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MyjniaSamochodowa
@@ -8,43 +9,87 @@ namespace MyjniaSamochodowa
     {
         static void Main(string[] args)
         {
-            int NumberOfCarwashes = Input.InputCarwash();
-            if (NumberOfCarwashes > 100) { Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("ARE YOU CRAZY?????"); }
-            int NumberOfCars = Input.InputCars();
-            
-            List<Car> Cars = new List<Car>();
-            List<Carwash> Stations = new List<Carwash>();
-            
-            for(int i = 0; i < NumberOfCars; i++)
-            {
-                Random randomGen = new Random();
-                string[] Colors = {"Black", "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta", "DarkYellow", "Gray", "DarkGray", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White", "Black",
-                    "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta","DarkYellow", "Gray", "DarkGray", "Blue", "Green","Cyan","Red","Magenta","Yellow", "White"};
+            int numberOfCarwashes = Input.InputCarwash();
+            if (numberOfCarwashes > 100) { Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("ARE YOU CRAZY?????"); }
 
-                string[] CarBrands = { "Audi", "BMW", "Skoda", "Nissan", "Suzuki", "Honda", "Renault", "Mercedes", "Fiat", "Polonez", "Ford", "Ferrari", "Toyota", "Opel" };
-                int bIndex = randomGen.Next(CarBrands.Length);
-                int cIndex = randomGen.Next(Colors.Length);
-                //rng defines how much time the car owner wastes. it also takes care for the cars color and brand.
-                Cars.Add(new Car(i, CarBrands[bIndex], Colors[cIndex], new TimeSpan(0, randomGen.Next(0, 2), randomGen.Next(20, 60)), new TimeSpan(0, randomGen.Next(0, 3), randomGen.Next(20, 60))));
-            }
-            for(int j = 0; j < NumberOfCarwashes; j++)
-            {// rng defines how much time it takes for ppl to wash their cars at different stations today ;D
-                var rand = new Random();
-                Stations.Add(new Carwash(j, new TimeSpan(0,rand.Next(3,10),0)));
-            }
-            for(int clients = 0; clients < NumberOfCars; clients++)
+            TimeSpan openingTime = new TimeSpan(0, 0, 0);
+            TimeSpan timer = openingTime;
+            TimeSpan timerExpire = new TimeSpan(Input.InputTime(), 0, 0);
+            TimeSpan oneMinute = new TimeSpan(0, 1, 0);
+
+            int spawnRatio = Input.InputCarSpawnChance();
+                
+            Queue<Car> cars = new Queue<Car>();
+            List<Car> clients = new List<Car>();
+
+            List<Carwash> stations = new List<Carwash>();
+            for (int j = 0; j < numberOfCarwashes; j++)
             {
-                for(int stations = 0; stations < NumberOfCarwashes; stations++)
+                stations.Add(new Carwash(j, new TimeSpan(0, 5, 0)));
+            }
+            List<TimeSpan> queueTimes = new List<TimeSpan>();
+            Random randomGen = new Random();
+
+            int numberOfClients = 0;
+            
+
+            while (timer < timerExpire || cars.Count != 0 || clients.Count!=0)
+            {
+                //the magical formula
+                int ratio = 100;
+                ratio = ratio-Math.Max(((cars.Count - 3) * 10), 0);
+                //for a driving away car, here I add his queue time to the List and make the Carwash station free
+                
+                foreach (var client in clients.ToArray())
                 {
-                    if (Stations[stations].GetOccupied() == false)
+                    if (client.GetDriveAwayTime() == timer)
                     {
-                        Stations[stations].SetTS(Stations[stations].Add( Stations[stations].GetTS(), Cars[clients].GetDriveUpTime()));
-                        //after adding timespan, continue with this shit xdd
-                        Stations[stations].CarDrivesUp()
+                        stations[client.getCarwashID()].SetOccupied(false);
+                        client.Leave(timer);
+                        queueTimes.Add(client.GetDriveUpTime() - client.getQueingUpTime());
+                        clients.Remove(client);
                     }
                 }
-            }
 
+                //here car gets added to que  
+                int hereWeAddNewCar = randomGen.Next(100);
+                if (hereWeAddNewCar < ((spawnRatio*ratio)/100) && timer<timerExpire)
+                {
+                    int bIndex = randomGen.Next(Car.getBrandsNumber());
+                    int cIndex = randomGen.Next(Car.getColorsNumber());
+                    //rng care of the cars color and brand.
+                    cars.Enqueue(new Car(numberOfClients, bIndex, cIndex));
+                    numberOfClients++;
+                    cars.Peek().Join(timer);
+                }
+
+                //here car goes from queue to washing
+                foreach (var station in stations)
+                {
+                    if (cars.Count != 0)
+                    {
+                        if (station.GetOccupied() == false)
+                            {
+                                station.SetOccupied(true);
+                                cars.Peek().Washing(cars.Peek().GetClientID(), station.GetID(), cars.Peek().GetBrand(), cars.Peek().GetColor(), timer);
+                                cars.Peek().SetDriveAwayTime(timer + station.GetWashingTime());
+                                cars.Peek().setCarwashID(station.GetID());
+                                clients.Add(cars.Dequeue());
+                            }
+                    }
+                }    
+                
+                
+                timer = timer + oneMinute;
+            }
+            TimeSpan avg = new TimeSpan(0,1,0);
+            foreach (var ts in queueTimes) 
+            {
+                avg += ts;
+            }
+            avg = avg / numberOfClients;
+            Carwash.Summary(openingTime, timer, numberOfClients, avg);
+            Console.ReadLine();
         }
     }
 }

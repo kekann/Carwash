@@ -7,22 +7,68 @@ namespace MyjniaSamochodowa
 {
     public class Car
     {
-        public Car (int ClientID, string Brand, string Color, TimeSpan DriveUp, TimeSpan DriveAway)
+        public Car (int ClientID, int brand, int color)
         {
             SetClientID(ClientID);
-            SetBrand(Brand);
-            SetColor(Color);
-            SetDriveUpTime(DriveUp);
-            SetDriveAwayTime(DriveAway);
+            SetBrand(carBrands[brand]);
+            SetColor(colors[color]);
         }
 
+        public void Join(TimeSpan time)
+        {
+            Console.WriteLine(time + " " + this.GetColor() + " " + this.GetBrand() + " joined the queque/");
+            setQueingUpTime(time);
+        }
+        public void Leave(TimeSpan time)
+        {
+            Console.WriteLine(time + " " + this.GetColor() + " " + this.GetBrand() + " is now perfectly clean, and so station "+this.getCarwashID()+" is free now.");
+        }
+        public void Washing(int ClientID, int StationID, string Brand, string Color, TimeSpan time)
+        {
+            SetDriveUpTime(time);
+            System.Console.WriteLine(time + " Client: " + ClientID + " in their " + Color + " " + Brand + " is washing his car at station " + StationID);
+        }
 
+        private static string[] colors = {"Black", "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta", "DarkYellow", "Gray", "DarkGray", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White", "Black",
+                    "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta","DarkYellow", "Gray", "DarkGray", "Blue", "Green","Cyan","Red","Magenta","Yellow", "White"};
+
+        public static int getColorsNumber()
+        {
+            return colors.Length;
+        }
+        private static string[] carBrands = { "Audi", "BMW", "Skoda", "Nissan", "Suzuki", "Honda", "Renault", "Mercedes", "Fiat", "Polonez", "Ford", "Ferrari", "Toyota", "Opel" };
+        public static int getBrandsNumber()
+        {
+            return carBrands.Length;
+        }
 
         private int ClientID;
         private string Brand;
         private string Color;
-        private System.TimeSpan DriveUpTime;
-        private System.TimeSpan DriveAwayTime;
+        private TimeSpan DriveUpTime;
+        private TimeSpan DriveAwayTime;
+        private TimeSpan QueingUpTime;
+
+        
+
+        private int carwashID;
+        public void setCarwashID(int carwashID)
+        {
+            this.carwashID = carwashID;
+        }
+        public int getCarwashID()
+        {
+            return this.carwashID;
+        }
+
+        public TimeSpan getQueingUpTime()
+        {
+            return this.QueingUpTime;
+        }
+        public void setQueingUpTime(TimeSpan queingUpTime)
+        {
+            this.QueingUpTime = queingUpTime;
+        }
 
         public System.TimeSpan GetDriveUpTime()
         {
