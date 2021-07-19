@@ -15,6 +15,7 @@ namespace MyjniaSamochodowa
 
         public static void Summary(TimeSpan openingTime, TimeSpan closingTime, int nClients, TimeSpan avgQueueTime)
         {
+            Console.ForegroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), "White");
             System.Console.WriteLine("Today we worked from " + openingTime + " till " + closingTime + " and served " + nClients + " clients.");
             System.Console.WriteLine("Average time in queue equals to: " + avgQueueTime);
         }

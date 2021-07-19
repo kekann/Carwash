@@ -32,8 +32,7 @@ namespace MyjniaSamochodowa
             System.Console.WriteLine(time + " Client " + ClientID + " in their " + Color + " " + Brand + " is washing his car at station " + StationID+".");
         }
 
-        private static string[] colors = {"DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta", "DarkYellow", "Gray", "DarkGray", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White", "Black",
-                    "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta","DarkYellow", "Gray", "DarkGray", "Blue", "Green","Cyan","Red","Magenta","Yellow", "White"};
+        private static string[] colors = {"DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta", "DarkYellow", "Gray", "DarkGray", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White"};
 
         public static int getColorsNumber()
         {
