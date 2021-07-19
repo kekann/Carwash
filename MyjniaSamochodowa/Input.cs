@@ -18,7 +18,7 @@ namespace MyjniaSamochodowa
         }
         public static int InputCarSpawnChance()
         {
-            Console.WriteLine("Now we only need to know the chance at which a new car can be added to queque every minute (value in %)");
+            Console.WriteLine("Now we only need to know the chance at which a new car can be added to queque every minute (value in %, the chance gets lower as number of cars in queue increases)");
             return Convert.ToInt32(Console.ReadLine());
         }
     }

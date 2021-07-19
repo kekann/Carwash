@@ -14,22 +14,25 @@ namespace MyjniaSamochodowa
             SetColor(colors[color]);
         }
 
-        public void Join(TimeSpan time)
+        public void Join(TimeSpan time, string color)
         {
-            Console.WriteLine(time + " " + this.GetColor() + " " + this.GetBrand() + " joined the queque/");
+            Console.ForegroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), color);
+            Console.WriteLine(time + " " + this.GetColor() + " " + this.GetBrand() + " joined the queque.");
             setQueingUpTime(time);
         }
-        public void Leave(TimeSpan time)
+        public void Leave(TimeSpan time, string color)
         {
+            Console.ForegroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), color);
             Console.WriteLine(time + " " + this.GetColor() + " " + this.GetBrand() + " is now perfectly clean, and so station "+this.getCarwashID()+" is free now.");
         }
-        public void Washing(int ClientID, int StationID, string Brand, string Color, TimeSpan time)
+        public void Washing(int ClientID, int StationID, string Brand, string color, TimeSpan time)
         {
+            Console.ForegroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), color);
             SetDriveUpTime(time);
-            System.Console.WriteLine(time + " Client: " + ClientID + " in their " + Color + " " + Brand + " is washing his car at station " + StationID);
+            System.Console.WriteLine(time + " Client " + ClientID + " in their " + Color + " " + Brand + " is washing his car at station " + StationID+".");
         }
 
-        private static string[] colors = {"Black", "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta", "DarkYellow", "Gray", "DarkGray", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White", "Black",
+        private static string[] colors = {"DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta", "DarkYellow", "Gray", "DarkGray", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White", "Black",
                     "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta","DarkYellow", "Gray", "DarkGray", "Blue", "Green","Cyan","Red","Magenta","Yellow", "White"};
 
         public static int getColorsNumber()

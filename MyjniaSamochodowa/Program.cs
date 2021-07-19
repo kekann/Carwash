@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MyjniaSamochodowa
 {
@@ -45,7 +46,7 @@ namespace MyjniaSamochodowa
                     if (client.GetDriveAwayTime() == timer)
                     {
                         stations[client.getCarwashID()].SetOccupied(false);
-                        client.Leave(timer);
+                        client.Leave(timer, client.GetColor());
                         queueTimes.Add(client.GetDriveUpTime() - client.getQueingUpTime());
                         clients.Remove(client);
                     }
@@ -58,9 +59,11 @@ namespace MyjniaSamochodowa
                     int bIndex = randomGen.Next(Car.getBrandsNumber());
                     int cIndex = randomGen.Next(Car.getColorsNumber());
                     //rng care of the cars color and brand.
-                    cars.Enqueue(new Car(numberOfClients, bIndex, cIndex));
+                    Car temp = new Car(numberOfClients, bIndex, cIndex);
+                    cars.Enqueue(temp);
+
                     numberOfClients++;
-                    cars.Peek().Join(timer);
+                    cars.Peek().Join(timer, temp.GetColor());
                 }
 
                 //here car goes from queue to washing
@@ -81,6 +84,7 @@ namespace MyjniaSamochodowa
                 
                 
                 timer = timer + oneMinute;
+                Thread.Sleep(10);
             }
             TimeSpan avg = new TimeSpan(0,1,0);
             foreach (var ts in queueTimes) 
